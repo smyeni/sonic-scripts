@@ -16,5 +16,8 @@ fi
 read -r HOUR RX RX_UNIT TX TX_UNIT TOTAL TOTAL_UNIT AVG_RATE RATE_UNIT <<< "$ROW"
 ALERT="OK"
 [[ "$TOTAL_UNIT" == "GiB" ]] && ALERT="CRITICAL_HIGH_USAGE"
-[[ "$TOTAL_UNIT" == "MiB" ]] && awk "BEGIN {exit !($TOTAL >= $THRESHOLD_MIB)}" && ALERT="HIGH_USAGE"
+#[[ "$TOTAL_UNIT" == "MiB" ]] && awk "BEGIN {exit !($TOTAL >= $THRESHOLD_MIB)}" && ALERT="HIGH_USAGE"
+if [[ "$TOTAL_UNIT" == "MiB" ]]; then
+  awk -v t="$TOTAL" -v thr="$THRESHOLD_MIB" 'BEGIN{ if(t+0 >= thr+0) exit 0; else exit 1 }' && ALERT="HIGH_USAGE"
+fi
 echo "$TARGET_DATE,$HOUR,$RX $RX_UNIT,$TX $TX_UNIT,$TOTAL $TOTAL_UNIT,$AVG_RATE $RATE_UNIT,$ALERT" >> "$LOG_FILE"
