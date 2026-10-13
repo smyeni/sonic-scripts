@@ -1,5 +1,11 @@
 #!/bin/bash
-INTERFACE="wlan0"
+#INTERFACE="wlan0"
+THRESHOLD_MIB=${1:-100}  # $1 -> threshold, default 500 MiB
+INTERFACE=${2:-wlan0}    # $2 -> interface, default wlan0
+
+# ./log_bandwidth.sh 50 wwan0   -> 50 MiB on wwan0
+# ./log_bandwidth.sh            -> 500 MiB on wlan0
+# ./log_bandwidth.sh 100        -> 100 MiB on wlan0
 LOG_FILE="/home/smyeni/hourly_bandwidth.log"
 THRESHOLD_MIB=${1:-50}
 [[ -f "$LOG_FILE" ]] || echo "Date,Hour,RX,TX,Total,Avg_Rate,Alert" > "$LOG_FILE"
